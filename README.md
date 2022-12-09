@@ -26,6 +26,9 @@
             - DELETE
                 - user_id 유저 삭제
     - 게시판
+        - /articles
+            - GET
+                - 작성된 모든 게시글 조회.
         - /users/{user_id}/articles
             - GET
                 - user_id 유저의 모든 게시글 조회
