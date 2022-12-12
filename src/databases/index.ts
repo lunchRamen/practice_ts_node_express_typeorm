@@ -3,7 +3,7 @@ import { ConnectionOptions } from 'typeorm';
 
 export const dbConnection: ConnectionOptions = {
   type: 'sqlite',
-  database: 'data/birdview.sqlite',
+  database: 'data/practice.sqlite',
   synchronize: true,
   logging: false,
   entities: [join(__dirname, '../**/*.entity{.ts,.js}')],

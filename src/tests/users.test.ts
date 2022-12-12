@@ -7,19 +7,27 @@ import { CreateUserDto } from '@dtos/users.dto';
 import { UserEntity } from '@entities/users.entity';
 import UserRoute from '@routes/users.route';
 
-beforeAll(async () => {
-  await createConnection(dbConnection);
-});
-
-afterAll(async () => {
-  await getConnection().close();
-});
-
 describe('Testing Users', () => {
+  beforeAll(async () => {
+    return createConnection({
+      type: 'sqlite',
+      database: ':memory:',
+      dropSchema: true,
+      entities: [UserEntity],
+      synchronize: true,
+      logging: false,
+    });
+  });
+
+  afterAll(async () => {
+    const conn = getConnection();
+    return conn.close();
+  });
+
   describe('[POST] /users', () => {
     it('response Create user', async () => {
       const userData: CreateUserDto = {
-        email: 'test@email.com',
+        nickname: 'bloom6561',
         password: 'q1w2e3r4!',
       };
 
@@ -29,7 +37,7 @@ describe('Testing Users', () => {
       userRepository.findOne = jest.fn().mockReturnValue(null);
       userRepository.save = jest.fn().mockReturnValue({
         id: 1,
-        email: userData.email,
+        nickname: userData.nickname,
         password: await bcrypt.hash(userData.password, 10),
       });
 
@@ -46,17 +54,17 @@ describe('Testing Users', () => {
       userRepository.find = jest.fn().mockReturnValue([
         {
           id: 1,
-          email: 'a@email.com',
+          nickname: 'bloom6561',
           password: await bcrypt.hash('q1w2e3r4!', 10),
         },
         {
           id: 2,
-          email: 'b@email.com',
+          nickname: 'bloom6562',
           password: await bcrypt.hash('a1s2d3f4!', 10),
         },
         {
           id: 3,
-          email: 'c@email.com',
+          nickname: 'bloom6563',
           password: await bcrypt.hash('z1x2c3v4!', 10),
         },
       ]);
@@ -75,7 +83,7 @@ describe('Testing Users', () => {
 
       userRepository.findOne = jest.fn().mockReturnValue({
         id: userId,
-        email: 'a@email.com',
+        nickname: 'bloom6561',
         password: await bcrypt.hash('q1w2e3r4!', 10),
       });
 
@@ -84,11 +92,16 @@ describe('Testing Users', () => {
     });
   });
 
-  describe('[PUT] /users/:id', () => {
+  describe('[PATCH] /users/:id', () => {
     it('response Update user', async () => {
       const userId = 1;
       const userData: CreateUserDto = {
-        email: 'test@email.com',
+        nickname: 'bloom6561',
+        password: '1q2w3e4r!',
+      };
+
+      const updateuserData: CreateUserDto = {
+        nickname: 'bloom6562',
         password: '1q2w3e4r!',
       };
 
@@ -97,22 +110,22 @@ describe('Testing Users', () => {
 
       userRepository.findOne = jest.fn().mockReturnValue({
         id: userId,
-        email: userData.email,
+        nickname: userData.nickname,
         password: await bcrypt.hash(userData.password, 10),
       });
       userRepository.update = jest.fn().mockReturnValue({
-        generatedMaps: [],
-        raw: [],
-        affected: 1,
+        id: userId,
+        nickname: updateuserData.nickname,
+        password: await bcrypt.hash(updateuserData.password, 10),
       });
       userRepository.findOne = jest.fn().mockReturnValue({
         id: userId,
-        email: userData.email,
-        password: await bcrypt.hash(userData.password, 10),
+        nickname: updateuserData.nickname,
+        password: await bcrypt.hash(updateuserData.password, 10),
       });
 
       const app = new App([usersRoute]);
-      return request(app.getServer()).put(`${usersRoute.path}/${userId}`).send(userData).expect(200);
+      return request(app.getServer()).patch(`${usersRoute.path}/${userId}`).send(updateuserData).expect(200);
     });
   });
 
@@ -125,7 +138,7 @@ describe('Testing Users', () => {
 
       userRepository.findOne = jest.fn().mockReturnValue({
         id: userId,
-        email: 'a@email.com',
+        nickname: 'bloom6561',
         password: await bcrypt.hash('q1w2e3r4!', 10),
       });
 
