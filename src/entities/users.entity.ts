@@ -9,8 +9,8 @@ export class UserEntity extends BaseEntity implements User {
 
   @Column()
   @IsNotEmpty()
-  @Unique(['email'])
-  email: string;
+  @Unique(['nickname'])
+  nickname: string;
 
   @Column()
   @IsNotEmpty()
