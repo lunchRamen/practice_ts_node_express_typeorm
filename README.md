@@ -60,6 +60,14 @@
         - /users/{user_id}/comments
             - GET
                 - 게시글에 상관없이, user_id 유저가 작성한 단 댓글들 조회
+    - 기본적 API 구현 후 추가 구현 목록
+        - 유저에 대한 login (sessionId 발급)
+        - 게시판의 C,U,D에 대한 certification
+            - C에 대해선 로그인상태인지
+            - U,D에 대해선 article.user_id == sessionId.user_id인지
+        - 댓글의 C,U,D에 대한 certification
+            - C에 대해선 로그인상태인지
+            - U,D에 대해선 comment.user_id == sessionId.user_id인지.
         
     
 
