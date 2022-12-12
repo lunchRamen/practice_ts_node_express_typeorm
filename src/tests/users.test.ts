@@ -46,6 +46,39 @@ describe('Testing Users', () => {
     });
   });
 
+  describe('[POST] /users : fail(user data is empty)', () => {
+    it('response Create user', async () => {
+      const usersRoute = new UserRoute();
+      const userRepository = new Repository<UserEntity>();
+
+      userRepository.findOne = jest.fn().mockReturnValue(null);
+
+      const app = new App([usersRoute]);
+      return request(app.getServer()).post(`${usersRoute.path}`).send({}).expect(400);
+    });
+  });
+
+  describe('[POST] /users : fail(unique column nickname already exist)', () => {
+    it('response Create user', async () => {
+      const userData: CreateUserDto = {
+        nickname: 'bloom6563',
+        password: 'q1w2e3r4!',
+      };
+
+      const usersRoute = new UserRoute();
+      const userRepository = new Repository<UserEntity>();
+
+      userRepository.findOne = jest.fn().mockReturnValue(null);
+      userRepository.save = jest.fn().mockReturnValue({
+        nickname: userData.nickname,
+        password: await bcrypt.hash(userData.password, 10),
+      });
+      const app = new App([usersRoute]);
+      request(app.getServer()).post(`${usersRoute.path}`).send(userData).expect(200);
+      request(app.getServer()).post(`${usersRoute.path}`).send(userData).expect(409);
+    });
+  });
+
   describe('[GET] /users', () => {
     it('response findAll users', async () => {
       const usersRoute = new UserRoute();
