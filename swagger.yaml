@@ -57,8 +57,8 @@ paths:
         500:
           description: 'Server Error'
 
-# [PUT] users/id
-    put:
+# [PATCH] users/id
+    patch:
       tags:
       - users
       summary: Update User By Id
@@ -108,12 +108,12 @@ definitions:
   users:
     type: object
     required:
-        - email
+        - nickname
         - password
     properties:
-      email:
+      nickname:
         type: string
-        description: user Email
+        description: user Nickname
       password:
         type: string
         description: user Password
